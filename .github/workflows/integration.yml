@@ -6,6 +6,7 @@ on:
     - '**/README.md'
   pull_request:
     types: [opened, reopened]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,7 +21,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repo: ${{ github.repository }}
-          SHA: ${{ github.sha }}
           environments: [test, prod]
           required_reviewers: thijsvtol
           wait_time: 1
