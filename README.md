@@ -19,7 +19,7 @@ jobs:
         with:
           token: ${{ secrets.GHP }}
           repo: ${{ github.repository }}
-          environments: test, prod
+          environments: test,prod
           required_reviewers: your-username
           wait_time: 5
           protected_branches_only: true
@@ -36,4 +36,5 @@ jobs:
 | wait_time               | false    | int                    | 0       |
 | protected_branches_only | false    | boolean                | false   |
 
-*Note*: required_reviewers can be a user or team (max 6 allowed)
+*Note1*: token requires the `repo` scope
+*Note2*: required_reviewers can be a user or team (max 6 allowed)
