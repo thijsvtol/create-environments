@@ -9,13 +9,14 @@ on:
 
 jobs:
   build:
+    name: Test action
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@master
 
       - name: Self test
-        uses: thijsvtol/create-environments@master
+        uses: thijsvtol/create-environments@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repo: ${{ github.repository }}
