@@ -73,12 +73,13 @@ func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 
 		environments, _, err := s.client.Repositories.CreateUpdateEnvironment(s.ctx, s.env.repoOwner, s.env.repo, env, opt)
 		if err != nil {
+			log.Fatalln(err)
 			return nil, err
 		}
 
 		repoEnvironments = append(repoEnvironments, environments)
 	}
-	log.Printf("Created/updatet the following environments: ", repoEnvironments)
+	log.Printf("Created/updated the following environments: ", repoEnvironments)
 
 	return repoEnvironments, nil
 }
