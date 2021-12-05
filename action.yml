@@ -16,6 +16,9 @@ inputs:
   wait_time:
     description: "Wait time in minutes"
     default: 0
+  protected_branches_only:
+    description: "Only protected branches can be deployed"
+    default: false
 
 runs:
   using: "docker"
