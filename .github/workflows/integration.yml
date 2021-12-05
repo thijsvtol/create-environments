@@ -1,0 +1,25 @@
+name: Integration Test
+
+on:
+  push:
+    paths-ignore:
+    - '**/README.md'
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Self test
+        uses: thijsvtol/create-environments@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          environments: [test, prod]
+          required_reviewers: thijsvtol
+          wait_time: 1

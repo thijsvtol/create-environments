@@ -1,0 +1,25 @@
+name: "Create Repository Environments"
+description: "Create deployment environments for repositories"
+author: "Thijs van Tol"
+inputs:
+  repo:
+    description: "Repository name"
+    required: true
+  token:
+    description: "Github token"
+    required: true
+  environments:
+    description: "Environments e.g. '[test, prod]'"
+    required: true
+  required_reviewers:
+    description: "Required reviewers"
+  wait_time:
+    description: "Wait time in minutes"
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
+
+branding:
+  icon: "cloud"
+  color: "orange"
