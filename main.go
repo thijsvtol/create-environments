@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/google/go-github/v41/github"
 	"golang.org/x/oauth2"
@@ -25,7 +24,6 @@ type service struct {
 	ctx    context.Context
 	client *github.Client
 	env    *env
-	wg     sync.WaitGroup
 }
 
 func environment() *env {
@@ -64,11 +62,11 @@ func (e *env) debugPrint() {
 }
 
 func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
-	var repoEnvironments []*github.Environment
-
+	var createdRepoEnvironments []*github.Environment
 	for _, env := range s.env.environments {
 		opt := &github.CreateUpdateEnvironment{
 			WaitTimer: &s.env.waitTime,
+			Reviewers: s.getUsers(),
 		}
 
 		environments, _, err := s.client.Repositories.CreateUpdateEnvironment(s.ctx, s.env.repoOwner, s.env.repo, env, opt)
@@ -77,11 +75,48 @@ func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 			return nil, err
 		}
 
-		repoEnvironments = append(repoEnvironments, environments)
+		createdRepoEnvironments = append(createdRepoEnvironments, environments)
 	}
-	log.Printf("Created/updated the following environments: ", repoEnvironments)
 
-	return repoEnvironments, nil
+	for _, env := range createdRepoEnvironments {
+		log.Printf("Created environment [%v] %v", *env.Name, *env.URL)
+	}
+
+	return createdRepoEnvironments, nil
+}
+
+func (s *service) getUsers() []*github.EnvReviewers {
+	var retrievedUsers []*github.EnvReviewers
+	for _, user := range s.env.requiredReviewers {
+		if strings.Contains(user, "@") {
+			orgTeam := strings.Split(user, "@")
+			team, _, err := s.client.Teams.GetTeamBySlug(s.ctx, orgTeam[0], orgTeam[1])
+			if err != nil {
+				log.Fatalln(err)
+				return nil
+			}
+
+			t := &github.EnvReviewers{
+				Type: team.Organization.Type,
+				ID:   team.ID,
+			}
+			retrievedUsers = append(retrievedUsers, t)
+		} else {
+			user, _, err := s.client.Users.Get(s.ctx, user)
+			if err != nil {
+				log.Fatalln(err)
+				return nil
+			}
+
+			u := &github.EnvReviewers{
+				Type: user.Type,
+				ID:   user.ID,
+			}
+			retrievedUsers = append(retrievedUsers, u)
+		}
+	}
+
+	return retrievedUsers
 }
 
 func main() {

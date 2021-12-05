@@ -3,16 +3,16 @@ description: "Create deployment environments for repositories"
 author: "Thijs van Tol"
 inputs:
   repo:
-    description: "Repository name"
+    description: "Repository name incl owner/org"
     required: true
   token:
-    description: "Github token"
+    description: "Github token with the scope 'repo'"
     required: true
   environments:
-    description: "Environments e.g. '[test, prod]'"
+    description: "Environments e.g. 'test, prod'"
     required: true
   required_reviewers:
-    description: "Required reviewers"
+    description: "Required reviewers e.g. 'org/team, user' max 6"
   wait_time:
     description: "Wait time in minutes"
 
