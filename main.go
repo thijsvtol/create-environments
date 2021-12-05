@@ -101,7 +101,7 @@ func (s *service) getUsers() []*github.EnvReviewers {
 				ID:   team.ID,
 			}
 			retrievedUsers = append(retrievedUsers, t)
-		} else {
+		} else if user != "" {
 			user, _, err := s.client.Users.Get(s.ctx, user)
 			if err != nil {
 				log.Fatalln(err)

@@ -22,5 +22,5 @@ jobs:
           token: ${{ secrets.GHP }}
           repo: ${{ github.repository }}
           environments: test, prod
-          required_reviewers: thijsvtol
-          wait_time: 1
+          # required_reviewers: thijsvtol
+          # wait_time: 1
