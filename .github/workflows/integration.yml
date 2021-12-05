@@ -19,7 +19,7 @@ jobs:
       - name: Self test
         uses: thijsvtol/create-environments@main
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GHP }}
           repo: ${{ github.repository }}
           environments: test, prod
           required_reviewers: thijsvtol
