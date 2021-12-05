@@ -21,6 +21,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repo: ${{ github.repository }}
-          environments: [test, prod]
+          environments: test, prod
           required_reviewers: thijsvtol
           wait_time: 1
