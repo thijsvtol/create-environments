@@ -15,6 +15,7 @@ inputs:
     description: "Required reviewers e.g. 'org/team,user' max 6"
   wait_time:
     description: "Wait time in minutes"
+    default: 0
 
 runs:
   using: "docker"
