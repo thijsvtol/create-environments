@@ -76,19 +76,18 @@ func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 		opt := &github.CreateUpdateEnvironment{
 			WaitTimer: &s.env.waitTime,
 			Reviewers: s.getUsers(),
-			DeploymentBranchPolicy: &github.BranchPolicy{
-				ProtectedBranches:    &s.env.protectedBranchesOnly,
-				CustomBranchPolicies: &s.env.customBranches,
-			},
 		}
 
-		if opt.DeploymentBranchPolicy.CustomBranchPolicies == opt.DeploymentBranchPolicy.ProtectedBranches {
-			opt.DeploymentBranchPolicy = nil
+		if opt.DeploymentBranchPolicy.CustomBranchPolicies != opt.DeploymentBranchPolicy.ProtectedBranches {
+			opt.DeploymentBranchPolicy = &github.BranchPolicy{
+				ProtectedBranches:    &s.env.protectedBranchesOnly,
+				CustomBranchPolicies: &s.env.customBranches,
+			}
 		}
 
 		environments, _, err := s.client.Repositories.CreateUpdateEnvironment(s.ctx, s.env.repoOwner, s.env.repo, env, opt)
 		if err != nil {
-			fmt.Sprintf("Found reviewers: %v", opt.Reviewers)
+			fmt.Sprintf("Options: %v", opt)
 			log.Fatalln(err)
 			return nil, err
 		}
