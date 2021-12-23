@@ -12,14 +12,12 @@ import (
 )
 
 type env struct {
-	repo                  string
-	repoOwner             string
-	token                 string
-	environments          []string
-	waitTime              int
-	requiredReviewers     []string
-	protectedBranchesOnly bool
-	customBranches        bool
+	repo              string
+	repoOwner         string
+	token             string
+	environments      []string
+	waitTime          int
+	requiredReviewers []string
 }
 
 type service struct {
@@ -42,20 +40,14 @@ func environment() *env {
 	if len(environments) == 0 {
 		log.Fatalln("The required_reviewers variable is required and could have multiple values separated by comma")
 	}
-	protectedBranchesOnly, err := strconv.ParseBool(os.Getenv("INPUT_PROTECTED_BRANCHES_ONLY"))
-	if err != nil {
-		log.Fatalln("protected_branches_only is not a boolean")
-	}
 
 	e := &env{
-		repoOwner:             repo[0],
-		repo:                  repo[1],
-		token:                 os.Getenv("INPUT_TOKEN"),
-		environments:          environments,
-		waitTime:              waitTime,
-		requiredReviewers:     requiredReviewers,
-		protectedBranchesOnly: protectedBranchesOnly,
-		customBranches:        false,
+		repoOwner:         repo[0],
+		repo:              repo[1],
+		token:             os.Getenv("INPUT_TOKEN"),
+		environments:      environments,
+		waitTime:          waitTime,
+		requiredReviewers: requiredReviewers,
 	}
 	return e
 }
@@ -75,10 +67,6 @@ func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 		opt := &github.CreateUpdateEnvironment{
 			WaitTimer: &s.env.waitTime,
 			Reviewers: s.getUsers(),
-			DeploymentBranchPolicy: &github.BranchPolicy{
-				ProtectedBranches:    &s.env.protectedBranchesOnly,
-				CustomBranchPolicies: &s.env.customBranches,
-			},
 		}
 
 		environments, _, err := s.client.Repositories.CreateUpdateEnvironment(s.ctx, s.env.repoOwner, s.env.repo, env, opt)
@@ -100,8 +88,8 @@ func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 func (s *service) getUsers() []*github.EnvReviewers {
 	var retrievedUsers []*github.EnvReviewers
 	for _, user := range s.env.requiredReviewers {
-		if strings.Contains(user, "@") {
-			orgTeam := strings.Split(user, "@")
+		if strings.Contains(user, "/") {
+			orgTeam := strings.Split(user, "/")
 			team, _, err := s.client.Teams.GetTeamBySlug(s.ctx, orgTeam[0], orgTeam[1])
 			if err != nil {
 				log.Fatalln(err)
