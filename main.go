@@ -55,7 +55,7 @@ func environment() *env {
 		waitTime:              waitTime,
 		requiredReviewers:     requiredReviewers,
 		protectedBranchesOnly: protectedBranchesOnly,
-		customBranches:        false,
+		customBranches:        true,
 	}
 	return e
 }
@@ -100,8 +100,8 @@ func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 func (s *service) getUsers() []*github.EnvReviewers {
 	var retrievedUsers []*github.EnvReviewers
 	for _, user := range s.env.requiredReviewers {
-		if strings.Contains(user, "@") {
-			orgTeam := strings.Split(user, "@")
+		if strings.Contains(user, "/") {
+			orgTeam := strings.Split(user, "/")
 			team, _, err := s.client.Teams.GetTeamBySlug(s.ctx, orgTeam[0], orgTeam[1])
 			if err != nil {
 				log.Fatalln(err)
