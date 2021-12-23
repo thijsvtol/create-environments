@@ -83,7 +83,7 @@ func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 
 		environments, _, err := s.client.Repositories.CreateUpdateEnvironment(s.ctx, s.env.repoOwner, s.env.repo, env, opt)
 		if err != nil {
-			log.Println("Passed options: ", opt)
+			log.Println("Found reviewers: ", opt.Reviewers)
 			log.Fatalln(err)
 			return nil, err
 		}
