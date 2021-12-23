@@ -82,6 +82,10 @@ func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 			},
 		}
 
+		if opt.DeploymentBranchPolicy.CustomBranchPolicies == opt.DeploymentBranchPolicy.ProtectedBranches {
+			opt.DeploymentBranchPolicy = nil
+		}
+
 		environments, _, err := s.client.Repositories.CreateUpdateEnvironment(s.ctx, s.env.repoOwner, s.env.repo, env, opt)
 		if err != nil {
 			fmt.Sprintf("Found reviewers: %v", opt.Reviewers)
