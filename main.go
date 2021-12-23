@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -84,7 +83,6 @@ func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 
 		environments, _, err := s.client.Repositories.CreateUpdateEnvironment(s.ctx, s.env.repoOwner, s.env.repo, env, opt)
 		if err != nil {
-			fmt.Sprintf("Options: %v", opt)
 			log.Fatalln(err)
 			return nil, err
 		}
