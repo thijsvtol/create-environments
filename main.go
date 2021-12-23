@@ -20,7 +20,6 @@ type env struct {
 	waitTime              int
 	requiredReviewers     []string
 	protectedBranchesOnly bool
-	customBranches        bool
 }
 
 type service struct {
@@ -56,7 +55,6 @@ func environment() *env {
 		waitTime:              waitTime,
 		requiredReviewers:     requiredReviewers,
 		protectedBranchesOnly: protectedBranchesOnly,
-		customBranches:        false,
 	}
 	return e
 }
@@ -76,13 +74,9 @@ func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 		opt := &github.CreateUpdateEnvironment{
 			WaitTimer: &s.env.waitTime,
 			Reviewers: s.getUsers(),
-		}
-
-		if opt.DeploymentBranchPolicy.CustomBranchPolicies != opt.DeploymentBranchPolicy.ProtectedBranches {
-			opt.DeploymentBranchPolicy = &github.BranchPolicy{
-				ProtectedBranches:    &s.env.protectedBranchesOnly,
-				CustomBranchPolicies: &s.env.customBranches,
-			}
+			DeploymentBranchPolicy: &github.BranchPolicy{
+				ProtectedBranches: &s.env.protectedBranchesOnly,
+			},
 		}
 
 		environments, _, err := s.client.Repositories.CreateUpdateEnvironment(s.ctx, s.env.repoOwner, s.env.repo, env, opt)
