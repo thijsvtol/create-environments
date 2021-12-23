@@ -75,7 +75,8 @@ func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 			WaitTimer: &s.env.waitTime,
 			Reviewers: s.getUsers(),
 			DeploymentBranchPolicy: &github.BranchPolicy{
-				ProtectedBranches: &s.env.protectedBranchesOnly,
+				ProtectedBranches:    &s.env.protectedBranchesOnly,
+				CustomBranchPolicies: nil,
 			},
 		}
 
