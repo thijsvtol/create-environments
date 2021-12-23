@@ -153,8 +153,9 @@ func (c *CreateUpdateEnvironment) MarshalJSON() ([]byte, error) {
 // See https://github.com/google/go-github/issues/992 for more information.
 // Removed omitempty here as the API expects null values for reviewers and deployment_branch_policy to clear them.
 type CreateUpdateEnvironment struct {
-	WaitTimer *int            `json:"wait_timer"`
-	Reviewers []*EnvReviewers `json:"reviewers"`
+	WaitTimer              *int            `json:"wait_timer"`
+	Reviewers              []*EnvReviewers `json:"reviewers"`
+	DeploymentBranchPolicy *BranchPolicy   `json:"deployment_branch_policy"`
 }
 
 // CreateUpdateEnvironment create or update a new environment for a repository.
