@@ -72,15 +72,24 @@ func (e *env) debugPrint() {
 
 func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 	var createdRepoEnvironments []*github.Environment
+
+	if s.env.protectedBranchesOnly {
+		s.env.customBranches = false
+	}
+
 	for _, env := range s.env.environments {
 		opt := &github.CreateUpdateEnvironment{
 			WaitTimer: &s.env.waitTime,
 			Reviewers: s.getUsers(),
+			DeploymentBranchPolicy: &github.BranchPolicy{
+				ProtectedBranches:    &s.env.protectedBranchesOnly,
+				CustomBranchPolicies: &s.env.customBranches,
+			},
 		}
 
-		environments, res, err := s.client.Repositories.CreateUpdateEnvironment(s.ctx, s.env.repoOwner, s.env.repo, env, opt)
-		fmt.Sprintf("Result: %v", res)
+		environments, _, err := s.client.Repositories.CreateUpdateEnvironment(s.ctx, s.env.repoOwner, s.env.repo, env, opt)
 		if err != nil {
+			fmt.Sprintf("Parsed options: %v", opt)
 			log.Fatalln(err)
 			return nil, err
 		}
@@ -110,6 +119,9 @@ func (s *service) getUsers() []*github.EnvReviewers {
 				Type: team.Organization.Type,
 				ID:   team.ID,
 			}
+
+			t.Type = github.String("Team")
+
 			retrievedUsers = append(retrievedUsers, t)
 		} else if user != "" {
 			user, _, err := s.client.Users.Get(s.ctx, user)
