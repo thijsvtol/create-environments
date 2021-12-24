@@ -75,10 +75,11 @@ func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 	for _, env := range s.env.environments {
 		opt := &github.CreateUpdateEnvironment{
 			WaitTimer: &s.env.waitTime,
+			Reviewers: s.getUsers(),
 		}
 
 		environments, res, err := s.client.Repositories.CreateUpdateEnvironment(s.ctx, s.env.repoOwner, s.env.repo, env, opt)
-		fmt.Sprintf("%v", res)
+		fmt.Sprintf("Result: %v", res)
 		if err != nil {
 			log.Fatalln(err)
 			return nil, err
