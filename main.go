@@ -75,16 +75,21 @@ func (s *service) createUpdateEnvironments() ([]*github.Environment, error) {
 	for _, env := range s.env.environments {
 		opt := &github.CreateUpdateEnvironment{
 			WaitTimer: &s.env.waitTime,
+			Reviewers: s.getUsers(),
+			DeploymentBranchPolicy: &github.BranchPolicy{
+				ProtectedBranches:    &s.env.protectedBranchesOnly,
+				CustomBranchPolicies: &s.env.customBranches,
+			},
 		}
 
-		environments, res, err := s.client.Repositories.CreateUpdateEnvironment(s.ctx, s.env.repoOwner, s.env.repo, env, opt)
-		fmt.Sprintf("%v", res)
-		if err != nil {
-			log.Fatalln(err)
-			return nil, err
-		}
+		// environments, res, err := s.client.Repositories.CreateUpdateEnvironment(s.ctx, s.env.repoOwner, s.env.repo, env, opt)
+		fmt.Sprintf("%v %v", env, opt)
+		// if err != nil {
+		// 	log.Fatalln(err)
+		// 	return nil, err
+		// }
 
-		createdRepoEnvironments = append(createdRepoEnvironments, environments)
+		// createdRepoEnvironments = append(createdRepoEnvironments, environments)
 	}
 
 	for _, env := range createdRepoEnvironments {
